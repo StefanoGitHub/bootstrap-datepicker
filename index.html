@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>datepicker</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://code.jquery.com/jquery-3.1.0.slim.min.js"
+            integrity="sha256-cRpWjoSOw5KcyIOaZNo4i6fZ9tKPhYYb6i5T9RSVJG8=" crossorigin="anonymous"></script>
+
+
+    <link rel="stylesheet" href="./css/datepicker.css">
+    <link rel="stylesheet" href="./css/datedisplay.css">
+    <script src="./js/bootstrap-datepicker.js"></script>
+    <script src="./js/bootstrap-datedisplay.js"></script>
+
+
+
+</head>
+<body>
+
+<!--<div class="datedisplay">2016-08-16</div><br>-->
+<!--<div class="datedisplay">2016-08-15</div><br>-->
+<!--<div class="datedisplay">2014-08-16</div><br>-->
+<!--<div class="datedisplay">2016-08-21</div>-->
+
+<table class="table-condensed">
+    <thead>
+        <tr>
+         <td >Dates</td>
+        </tr>
+    </thead>
+    <tr><td class="datedisplay">2016-08-16</td></tr>
+    <tr><td class="datedisplay">2016-08-15</td></tr>
+    <tr><td class="datedisplay">2014-08-16</td></tr>
+    <tr><td class="datedisplay">2016-08-21</td></tr>
+</table>
+
+
+<script>
+    $('.datedisplay').datedisplay({
+        calendarWeeks: true,
+//        format: 'mm-dd-yyyy'
+        format: 'yyyy-mm-dd'
+    });
+
+
+</script>
+
+</body>
+</html>

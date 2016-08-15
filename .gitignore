@@ -1,2 +1,6 @@
 instrumented/
 tests/coverage.html
+
+
+### IntelliJ project files
+.idea/

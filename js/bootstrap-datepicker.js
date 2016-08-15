@@ -34,16 +34,17 @@
 		var that = this;
 
 		this.element = $(element);
-		this.language = options.language||this.element.data('date-language')||"en";
+		this.language = options.language || this.element.data('date-language') || "en";
 		this.language = this.language in dates ? this.language : "en";
-		this.isRTL = dates[this.language].rtl||false;
-		this.format = DPGlobal.parseFormat(options.format||this.element.data('date-format')||'mm/dd/yyyy');
+		this.isRTL = dates[this.language].rtl || false;
+		this.format = DPGlobal.parseFormat(options.format || this.element.data('date-format') || 'mm/dd/yyyy');
 		this.isInline = false;
 		this.isInput = this.element.is('input');
 		this.component = this.element.is('.date') ? this.element.find('.add-on') : false;
 		this.hasInput = this.component && this.element.find('input').length;
-		if(this.component && this.component.length === 0)
+		if (this.component && this.component.length === 0) {
 			this.component = false;
+		}
 
 		this._attachEvents();
 
@@ -53,7 +54,6 @@
 		} else if ('dateForceParse' in this.element.data()) {
 			this.forceParse = this.element.data('date-force-parse');
 		}
-		 
 
 		this.picker = $(DPGlobal.template)
 							.appendTo(this.isInline ? this.element : 'body')
@@ -170,6 +170,7 @@
 				el.on(ev);
 			}
 		},
+
 		_detachEvents: function(){
 			for (var i=0, el, ev; i<this._events.length; i++){
 				el = this._events[i][0];
@@ -761,9 +762,10 @@
 		});
 	};
 
-	$.fn.datepicker.defaults = {
-	};
+	$.fn.datepicker.defaults = {};
+
 	$.fn.datepicker.Constructor = Datepicker;
+
 	var dates = $.fn.datepicker.dates = {
 		en: {
 			days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],

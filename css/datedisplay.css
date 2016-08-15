@@ -1,0 +1,295 @@
+/*!
+ * datedisplay for Bootstrap
+ *
+ * Copyright 2012 Stefan Petre
+ * Improvements by Andrew Rowls
+ * Licensed under the Apache License v2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ */
+.datedisplay {
+  padding: 4px;
+  margin-top: 1px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  direction: ltr;
+  /*.dow {
+		border-top: 1px solid #ddd !important;
+	}*/
+
+}
+.datedisplay-inline {
+  width: 220px;
+}
+.datedisplay.datedisplay-rtl {
+  direction: rtl;
+}
+.datedisplay.datedisplay-rtl table tr td span {
+  float: right;
+}
+.datedisplay-dropdown {
+  top: 0;
+  left: 0;
+}
+.datedisplay-dropdown:before {
+  content: '';
+  display: inline-block;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 7px solid #ccc;
+  border-bottom-color: rgba(0, 0, 0, 0.2);
+  position: absolute;
+  top: -7px;
+  left: 6px;
+}
+.datedisplay-dropdown:after {
+  content: '';
+  display: inline-block;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid #ffffff;
+  position: absolute;
+  top: -6px;
+  left: 7px;
+}
+.datedisplay.days div.datedisplay-days {
+  display: block;
+}
+.datedisplay.months div.datedisplay-months {
+  display: block;
+}
+.datedisplay.years div.datedisplay-years {
+  display: block;
+}
+.datedisplay table {
+  margin: 0;
+}
+.datedisplay td,
+.datedisplay th {
+  text-align: center;
+  width: 20px;
+  height: 20px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  border: none;
+}
+.table-striped .datedisplay table tr td,
+.table-striped .datedisplay table tr th {
+  background-color: transparent;
+}
+.datedisplay table tr td.day:hover {
+  background: #eeeeee;
+  cursor: pointer;
+}
+.datedisplay table tr td.old,
+.datedisplay table tr td.new {
+  color: #999999;
+}
+.datedisplay table tr td.disabled,
+.datedisplay table tr td.disabled:hover {
+  background: none;
+  color: #999999;
+  cursor: default;
+}
+.datedisplay table tr td.today,
+.datedisplay table tr td.today:hover,
+.datedisplay table tr td.today.disabled,
+.datedisplay table tr td.today.disabled:hover {
+  background-color: #fde19a;
+  background-image: -moz-linear-gradient(top, #fdd49a, #fdf59a);
+  background-image: -ms-linear-gradient(top, #fdd49a, #fdf59a);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#fdd49a), to(#fdf59a));
+  background-image: -webkit-linear-gradient(top, #fdd49a, #fdf59a);
+  background-image: -o-linear-gradient(top, #fdd49a, #fdf59a);
+  background-image: linear-gradient(top, #fdd49a, #fdf59a);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fdd49a', endColorstr='#fdf59a', GradientType=0);
+  border-color: #fdf59a #fdf59a #fbed50;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+.datedisplay table tr td.today:hover,
+.datedisplay table tr td.today:hover:hover,
+.datedisplay table tr td.today.disabled:hover,
+.datedisplay table tr td.today.disabled:hover:hover,
+.datedisplay table tr td.today:active,
+.datedisplay table tr td.today:hover:active,
+.datedisplay table tr td.today.disabled:active,
+.datedisplay table tr td.today.disabled:hover:active,
+.datedisplay table tr td.today.active,
+.datedisplay table tr td.today:hover.active,
+.datedisplay table tr td.today.disabled.active,
+.datedisplay table tr td.today.disabled:hover.active,
+.datedisplay table tr td.today.disabled,
+.datedisplay table tr td.today:hover.disabled,
+.datedisplay table tr td.today.disabled.disabled,
+.datedisplay table tr td.today.disabled:hover.disabled,
+.datedisplay table tr td.today[disabled],
+.datedisplay table tr td.today:hover[disabled],
+.datedisplay table tr td.today.disabled[disabled],
+.datedisplay table tr td.today.disabled:hover[disabled] {
+  background-color: #fdf59a;
+}
+.datedisplay table tr td.today:active,
+.datedisplay table tr td.today:hover:active,
+.datedisplay table tr td.today.disabled:active,
+.datedisplay table tr td.today.disabled:hover:active,
+.datedisplay table tr td.today.active,
+.datedisplay table tr td.today:hover.active,
+.datedisplay table tr td.today.disabled.active,
+.datedisplay table tr td.today.disabled:hover.active {
+  background-color: #fbf069 \9;
+}
+.datedisplay table tr td.active,
+.datedisplay table tr td.active:hover,
+.datedisplay table tr td.active.disabled,
+.datedisplay table tr td.active.disabled:hover {
+  background-color: #006dcc;
+  background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
+  background-image: -ms-linear-gradient(top, #0088cc, #0044cc);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0044cc));
+  background-image: -webkit-linear-gradient(top, #0088cc, #0044cc);
+  background-image: -o-linear-gradient(top, #0088cc, #0044cc);
+  background-image: linear-gradient(top, #0088cc, #0044cc);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0088cc', endColorstr='#0044cc', GradientType=0);
+  border-color: #0044cc #0044cc #002a80;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  color: #fff;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
+.datedisplay table tr td.active:hover,
+.datedisplay table tr td.active:hover:hover,
+.datedisplay table tr td.active.disabled:hover,
+.datedisplay table tr td.active.disabled:hover:hover,
+.datedisplay table tr td.active:active,
+.datedisplay table tr td.active:hover:active,
+.datedisplay table tr td.active.disabled:active,
+.datedisplay table tr td.active.disabled:hover:active,
+.datedisplay table tr td.active.active,
+.datedisplay table tr td.active:hover.active,
+.datedisplay table tr td.active.disabled.active,
+.datedisplay table tr td.active.disabled:hover.active,
+.datedisplay table tr td.active.disabled,
+.datedisplay table tr td.active:hover.disabled,
+.datedisplay table tr td.active.disabled.disabled,
+.datedisplay table tr td.active.disabled:hover.disabled,
+.datedisplay table tr td.active[disabled],
+.datedisplay table tr td.active:hover[disabled],
+.datedisplay table tr td.active.disabled[disabled],
+.datedisplay table tr td.active.disabled:hover[disabled] {
+  background-color: #0044cc;
+}
+.datedisplay table tr td.active:active,
+.datedisplay table tr td.active:hover:active,
+.datedisplay table tr td.active.disabled:active,
+.datedisplay table tr td.active.disabled:hover:active,
+.datedisplay table tr td.active.active,
+.datedisplay table tr td.active:hover.active,
+.datedisplay table tr td.active.disabled.active,
+.datedisplay table tr td.active.disabled:hover.active {
+  background-color: #003399 \9;
+}
+.datedisplay table tr td span {
+  display: block;
+  width: 23%;
+  height: 54px;
+  line-height: 54px;
+  float: left;
+  margin: 1%;
+  cursor: pointer;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+.datedisplay table tr td span:hover {
+  background: #eeeeee;
+}
+.datedisplay table tr td span.disabled,
+.datedisplay table tr td span.disabled:hover {
+  background: none;
+  color: #999999;
+  cursor: default;
+}
+.datedisplay table tr td span.active,
+.datedisplay table tr td span.active:hover,
+.datedisplay table tr td span.active.disabled,
+.datedisplay table tr td span.active.disabled:hover {
+  background-color: #006dcc;
+  background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
+  background-image: -ms-linear-gradient(top, #0088cc, #0044cc);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0044cc));
+  background-image: -webkit-linear-gradient(top, #0088cc, #0044cc);
+  background-image: -o-linear-gradient(top, #0088cc, #0044cc);
+  background-image: linear-gradient(top, #0088cc, #0044cc);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0088cc', endColorstr='#0044cc', GradientType=0);
+  border-color: #0044cc #0044cc #002a80;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  color: #fff;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
+.datedisplay table tr td span.active:hover,
+.datedisplay table tr td span.active:hover:hover,
+.datedisplay table tr td span.active.disabled:hover,
+.datedisplay table tr td span.active.disabled:hover:hover,
+.datedisplay table tr td span.active:active,
+.datedisplay table tr td span.active:hover:active,
+.datedisplay table tr td span.active.disabled:active,
+.datedisplay table tr td span.active.disabled:hover:active,
+.datedisplay table tr td span.active.active,
+.datedisplay table tr td span.active:hover.active,
+.datedisplay table tr td span.active.disabled.active,
+.datedisplay table tr td span.active.disabled:hover.active,
+.datedisplay table tr td span.active.disabled,
+.datedisplay table tr td span.active:hover.disabled,
+.datedisplay table tr td span.active.disabled.disabled,
+.datedisplay table tr td span.active.disabled:hover.disabled,
+.datedisplay table tr td span.active[disabled],
+.datedisplay table tr td span.active:hover[disabled],
+.datedisplay table tr td span.active.disabled[disabled],
+.datedisplay table tr td span.active.disabled:hover[disabled] {
+  background-color: #0044cc;
+}
+.datedisplay table tr td span.active:active,
+.datedisplay table tr td span.active:hover:active,
+.datedisplay table tr td span.active.disabled:active,
+.datedisplay table tr td span.active.disabled:hover:active,
+.datedisplay table tr td span.active.active,
+.datedisplay table tr td span.active:hover.active,
+.datedisplay table tr td span.active.disabled.active,
+.datedisplay table tr td span.active.disabled:hover.active {
+  background-color: #003399 \9;
+}
+.datedisplay table tr td span.old {
+  color: #999999;
+}
+.datedisplay th.switch {
+  width: 145px;
+}
+.datedisplay thead tr:first-child th,
+.datedisplay tfoot tr:first-child th {
+  cursor: pointer;
+}
+.datedisplay thead tr:first-child th:hover,
+.datedisplay tfoot tr:first-child th:hover {
+  background: #eeeeee;
+}
+.input-append.date .add-on i,
+.input-prepend.date .add-on i {
+  display: block;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+}
+
+.datedisplay .cw {
+  font-size: 10px;
+  width: 12px;
+  padding: 0 2px 0 5px;
+  vertical-align: middle;
+}
