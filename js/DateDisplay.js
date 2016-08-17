@@ -1,9 +1,8 @@
 /* =========================================================
  * bootstrap-datedisplay.js
- * http://www.eyecon.ro/bootstrap-datedisplay
  * =========================================================
- * Copyright 2012 Stefan Petre
- * Improvements by Andrew Rowls
+ * Orignal project and code by Stefan Petre, and improved by Andrew Rowls
+ * Created by Stefano Borghi
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,157 +17,84 @@
  * limitations under the License.
  * ========================================================= */
 
-!function( $ ) {
 
 	function UTCDate(){
 		return new Date(Date.UTC.apply(Date, arguments));
 	}
-	function UTCToday(){
-		var today = new Date();
-		return UTCDate(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
-	}
-
-	// define DateDisplay object/constructor
+	
+	// define DateDisplay object
 	var DateDisplay = function (element, options) {
 		
 		this.element = $(element);
 		this.language = "en";
-		this.isRTL = false;
-		this.format = DDGlobal.parseFormat(options.format || this.element.data('date-format') || 'mm/dd/yyyy');
-		this.isInline = false;
-		this.isInput = true;
-		this.component = false;
-		this.hasInput = false;
-		if (this.component && this.component.length === 0) {
-			this.component = false;
-		}
+		this.format = ddDOM.parseFormat(options.format || this.element.data('date-format') || 'mm/dd/yyyy');
 		
-		this.forceParse = true;
+		//associate DOM object
+		this.DD = $(ddDOM.template).appendTo('body');
 		
-		//init datedisplay
-		this.DD = $(DDGlobal.template)
-			.appendTo('body');
-			//add events
-		this.element.on({
-				mouseenter: $.proxy(this.show, this),
-				mouseleave: $.proxy(this.hide, this)
-			});
+		//add events
+		// this.element.on({
+		// 		mouseenter: $.proxy(this.show, this),
+		// 		mouseleave: $.proxy(this.hide, this)
+		// 	});
 		
 		//apply style
 		this.DD.addClass('datedisplay-dropdown dropdown-menu');
-		
-		this.autoclose = false;
-		this.keyboardNavigation = false;
-		this.viewMode = 0;
-		this.todayBtn = false;
- 		this.todayHighlight = true;
-		
-		
-		this.calendarWeeks = true;
+		this.todayHighlight = options.todayHighlight || false;
+		this.calendarWeeks = options.calendarWeeks || false;
 		if (this.calendarWeeks) {
-			this.DD.find('.datedisplay-days .datedisplay-switch, thead .datedisplay-title, tfoot .today, tfoot .clear')
+			this.DD.find('.datedisplay-days .datedisplay-switch, thead .datedisplay-title')
 				.attr('colspan', function (i, val) {
 					return Number(val) + 1;
 				});
 		}
-		
 		this.weekStart = ((options.weekStart || this.element.data('date-weekstart') || 0) % 7);
 		this.weekEnd = ((this.weekStart + 6) % 7);
-		this.startDate = -Infinity;
-		this.endDate = Infinity;
-		this.fillDow();
-		this.fillMonths();
-		this.update();
 		
+		return this;
 	};
 	
+	//Define methods
 	DateDisplay.prototype = {
 		
-		constructor: DateDisplay,
-		
+		//show calendar
 		show: function(e) {
 			this.DD.show();
-			this.height = this.component ? this.component.outerHeight() : this.element.outerHeight();
-			this.update();
+			this.height = this.element.outerHeight();
+			this.setCalendar();
 			this.place();
 			$(window).on('resize', $.proxy(this.place, this));
 			if (e ) {
 				e.stopPropagation();
 				e.preventDefault();
 			}
-			this.element.trigger({
-				type: 'show',
-				date: this.date
-			});
-		},
-
-		hide: function(e){
-			this.DD.hide();
-		},
-
-		remove: function() {
-			this.DD.remove();
-			delete this.element.data().datedisplay;
-		},
-
-		getDate: function() {
-			var d = this.getUTCDate();
-			return new Date(d.getTime() + (d.getTimezoneOffset()*60000));
-		},
-
-		getUTCDate: function() {
-			return this.date;
-		},
-
-		setDate: function(d) {
-			this.setUTCDate(new Date(d.getTime() - (d.getTimezoneOffset()*60000)));
-		},
-
-		setUTCDate: function(d) {
-			this.date = d;
-			this.setValue();
-		},
-
-		setValue: function() {
-			var formatted = this.getFormattedDate();
-			if (!this.isInput) {
-				if (this.component){
-					this.element.find('input').val(formatted);
-				}
-				this.element.data('date', formatted);
-			} else {
-				this.element.val(formatted);
-			}
-		},
-
-		getFormattedDate: function(format) {
-			if (format === undefined) {
-				format = this.format;
-			}
-			return DDGlobal.formatDate(this.date, format, this.language);
 		},
 		
+		//remove object and DOM elements
+		remove: function() {
+			this.DD.remove();
+			delete this.element.data().datedisplay; // needed??
+		},
+
+		//set css to place the calendar close to the element
 		place: function(){
-						if(this.isInline) return;
 			var zIndex = parseInt(this.element.parents().filter(function() {
 							return $(this).css('z-index') != 'auto';
 						}).first().css('z-index'))+10;
-			var offset = this.component ? this.component.offset() : this.element.offset();
-			var height = this.component ? this.component.outerHeight(true) : this.element.outerHeight(true);
+			var offset = this.element.offset();
+			var height = this.element.outerHeight(true);
 			this.DD.css({
 				top: offset.top + height,
 				left: offset.left,
 				zIndex: zIndex
 			});
 		},
-
-		update: function(){
-			
+		
+		//create calendar
+		setCalendar: function(){
 			//set date from element html content
 			var d = this.element.html();
-			this.date = DDGlobal.parseDate(d, this.format, this.language);
-
-			var oldViewDate = this.viewDate;
+			this.date = ddDOM.parseDate(d, this.format, this.language);
 			if (this.date < this.startDate) {
 				this.viewDate = new Date(this.startDate);
 			} else if (this.date > this.endDate) {
@@ -176,21 +102,15 @@
 			} else {
 				this.viewDate = new Date(this.date);
 			}
-
-			if (oldViewDate && oldViewDate.getTime() != this.viewDate.getTime()){
-				this.element.trigger({
-					type: 'changeDate',
-					date: this.viewDate
-				});
-			}
 			this.fill();
 		},
 
+		//set days of the week
 		fillDow: function(){
 			var dowCnt = this.weekStart,
 			html = '<tr>';
 			if (this.calendarWeeks) {
-				html += '<th class="cw">&#160;</th>';
+				html += '<th class="cw">&#35;</th>';
 			}
 			while (dowCnt < this.weekStart + 7) {
 				html += '<th class="dow">'+dates[this.language].daysMin[(dowCnt++)%7]+'</th>';
@@ -198,34 +118,22 @@
 			html += '</tr>';
 			this.DD.find('.datedisplay-days thead').append(html);
 		},
-
-		fillMonths: function(){
-			var html = '',
-			i = 0;
-			while (i < 12) {
-				html += '<span class="month">'+dates[this.language].monthsShort[i++]+'</span>';
-			}
-			this.DD.find('.datedisplay-months td').html(html);
-		},
-
+		
+		//fill calendar based on the date
 		fill: function() {
+			this.fillDow();
 			var d = new Date(this.viewDate),
 				year = d.getUTCFullYear(),
 				month = d.getUTCMonth(),
-				startYear = this.startDate !== -Infinity ? this.startDate.getUTCFullYear() : -Infinity,
-				startMonth = this.startDate !== -Infinity ? this.startDate.getUTCMonth() : -Infinity,
-				endYear = this.endDate !== Infinity ? this.endDate.getUTCFullYear() : Infinity,
-				endMonth = this.endDate !== Infinity ? this.endDate.getUTCMonth() : Infinity,
 				currentDate = this.date && this.date.valueOf(),
 				today = new Date();
 			this.DD.find('.datedisplay-days thead th:eq(1)')
 						.text(dates[this.language].months[month]+' '+year);
 			this.DD.find('tfoot th.today')
 						.text(dates[this.language].today)
-						.toggle(this.todayBtn !== false);
-			this.fillMonths();
+						.toggle(false);
 			var prevMonth = UTCDate(year, month-1, 28,0,0,0,0),
-				day = DDGlobal.getDaysInMonth(prevMonth.getUTCFullYear(), prevMonth.getUTCMonth());
+				day = ddDOM.getDaysInMonth(prevMonth.getUTCFullYear(), prevMonth.getUTCMonth());
 			prevMonth.setUTCDate(day);
 			prevMonth.setUTCDate(day - (prevMonth.getUTCDay() - this.weekStart + 7)%7);
 			var nextMonth = new Date(prevMonth);
@@ -234,7 +142,7 @@
 			var html = [];
 			var weekDay, clsName;
 			
-			while (prevMonth.valueOf() < nextMonth) {
+			while (prevMonth.valueOf() < nextMonth ) {
 				weekDay = prevMonth.getUTCDay();
 				if (weekDay === this.weekStart) {
 					html.push('<tr>');
@@ -282,149 +190,24 @@
 				prevMonth.setUTCDate(prevMonth.getUTCDate()+1);
 			}
 			this.DD.find('.datedisplay-days tbody').empty().append(html.join(''));
-			var currentYear = this.date && this.date.getUTCFullYear();
-
-			var months = this.DD.find('.datedisplay-months')
-						.find('th:eq(1)')
-							.text(year)
-							.end()
-						.find('span').removeClass('active');
-			if (currentYear && currentYear == year) {
-				months.eq(this.date.getUTCMonth()).addClass('active');
-			}
-			if (year < startYear || year > endYear) {
-				months.addClass('disabled');
-			}
-			if (year == startYear) {
-				months.slice(0, startMonth).addClass('disabled');
-			}
-			if (year == endYear) {
-				months.slice(endMonth+1).addClass('disabled');
-			}
-
-			html = '';
-			year = parseInt(year/10, 10) * 10;
-			var yearCont = this.DD.find('.datedisplay-years')
-								.find('th:eq(1)')
-									.text(year + '-' + (year + 9))
-									.end()
-								.find('td');
-			year -= 1;
-			for (var i = -1; i < 11; i++) {
-				html += '<span class="year'+(i == -1 || i == 10 ? ' old' : '')+(currentYear == year ? ' active' : '')+(year < startYear || year > endYear ? ' disabled' : '')+'">'+year+'</span>';
-				year += 1;
-			}
-			yearCont.html(html);
-		},
-
-		_setDate: function(date, which){
-			if (!which || which == 'date')
-				this.date = date;
-			if (!which || which  == 'view')
-				this.viewDate = date;
-			this.fill();
-			this.setValue();
-			this.element.trigger({
-				type: 'changeDate',
-				date: this.date
-			});
-			var element;
-			if (this.isInput) {
-				element = this.element;
-			} else if (this.component){
-				element = this.element.find('input');
-			}
-			if (element) {
-				element.change();
-				if (this.autoclose && (!which || which == 'date')) {
-					this.hide();
-				}
-			}
-		},
-
-		moveMonth: function(date, dir){
-			if (!dir) return date;
-			var new_date = new Date(date.valueOf()),
-				day = new_date.getUTCDate(),
-				month = new_date.getUTCMonth(),
-				mag = Math.abs(dir),
-				new_month, test;
-			dir = dir > 0 ? 1 : -1;
-			if (mag == 1){
-				test = dir == -1
-					// If going back one month, make sure month is not current month
-					// (eg, Mar 31 -> Feb 31 == Feb 28, not Mar 02)
-					? function(){ return new_date.getUTCMonth() == month; }
-					// If going forward one month, make sure month is as expected
-					// (eg, Jan 31 -> Feb 31 == Feb 28, not Mar 02)
-					: function(){ return new_date.getUTCMonth() != new_month; };
-				new_month = month + dir;
-				new_date.setUTCMonth(new_month);
-				// Dec -> Jan (12) or Jan -> Dec (-1) -- limit expected date to 0-11
-				if (new_month < 0 || new_month > 11)
-					new_month = (new_month + 12) % 12;
-			} else {
-				// For magnitudes >1, move one month at a time...
-				for (var i=0; i<mag; i++)
-					// ...which might decrease the day (eg, Jan 31 to Feb 28, etc)...
-					new_date = this.moveMonth(new_date, dir);
-				// ...then reset the day, keeping it in the new month
-				new_month = new_date.getUTCMonth();
-				new_date.setUTCDate(day);
-				test = function(){ return new_month != new_date.getUTCMonth(); };
-			}
-			// Common date-resetting loop -- if date is beyond end of month, make it
-			// end of month
-			while (test()){
-				new_date.setUTCDate(--day);
-				new_date.setUTCMonth(new_month);
-			}
-			return new_date;
-		},
-
-		moveYear: function(date, dir){
-			return this.moveMonth(date, dir*12);
 		}
 		
 	};
 
-	//init object function
-	$.fn.datedisplay = function (option) {
-		var args = Array.apply(null, arguments);
-		args.shift();
-		return this.each(function () {
-			var $this = $(this),
-				data = $this.data('datedisplay'),
-				options = typeof option == 'object' && option;
-			if (!data) {
-				$this.data('datedisplay', (data = new DateDisplay(this, $.extend({}, $.fn.datedisplay.defaults, options))));
-			}
-			if (typeof option == 'string' && typeof data[option] == 'function') {
-				data[option].apply(data, args);
-			}
-		});
-	};
-	
-	
-	$.fn.datedisplay.Constructor = DateDisplay;
-
-	var dates = $.fn.datedisplay.dates = {
+	//new languages can go here
+	var dates = {
 		en: {
-			days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-			daysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
 			daysMin: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
-			months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-			monthsShort: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-			today: "Today"
+			months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 		}
 	};
 
-	var DDGlobal = {
+	var ddDOM = {
 		isLeapYear: function (year) {
 			return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0));
 		},
 		getDaysInMonth: function (year, month) {
-			return [31, (DDGlobal.isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
+			return [31, (ddDOM.isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
 		},
 		validParts: /dd?|DD?|mm?|MM?|yy(?:yy)?/g,
 		nonpunctuation: /[^ -\/:-@\[\u3400-\u9fff-`{-~\t\n\r]+/g,
@@ -439,15 +222,17 @@
 			return {separators: separators, parts: parts};
 		},
 		parseDate: function(date, format, language) {
-			if (date instanceof Date) {return date;}
+			if (date instanceof Date) { return date; }
 			
+			var part;
+
 			if (/^[\-+]\d+[dmwy]([\s,]+[\-+]\d+[dmwy])*$/.test(date)) {
-				var part_re = /([\-+]\d+)([dmwy])/,
-					parts = date.match(/([\-+]\d+)([dmwy])/g),
-					part, dir;
+				var part_re = /([\-+]\d+)([dmwy])/;
+				var partsMatch = date.match(/([\-+]\d+)([dmwy])/g);
+				var dir;
 				date = new Date();
-				for (var i=0; i<parts.length; i++) {
-					part = part_re.exec(parts[i]);
+				for (var i=0; i< partsMatch.length; i++) {
+					part = part_re.exec(partsMatch[i]);
 					dir = parseInt(part[1]);
 					switch(part[2]){
 						case 'd':
@@ -466,11 +251,11 @@
 				}
 				return UTCDate(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 0, 0, 0);
 			}
-			var parts = date && date.match(this.nonpunctuation) || [],
-				date = new Date(),
-				parsed = {},
-				setters_order = ['yyyy', 'yy', 'M', 'MM', 'm', 'mm', 'd', 'dd'],
-				setters_map = {
+			var parts = date && date.match(this.nonpunctuation) || [];
+			date = new Date();
+			var parsed = {};
+			var setters_order = ['yyyy', 'yy', 'M', 'MM', 'm', 'mm', 'd', 'dd'];
+			var setters_map = {
 					yyyy: function(d,v){ return d.setUTCFullYear(v); },
 					yy: function(d,v){ return d.setUTCFullYear(2000+v); },
 					m: function(d,v){
@@ -483,8 +268,9 @@
 						return d;
 					},
 					d: function(d,v){ return d.setUTCDate(v); }
-				},
-				val, filtered, part;
+				};
+			var val;
+			var filtered;
 			setters_map['M'] = setters_map['MM'] = setters_map['mm'] = setters_map['m'];
 			setters_map['dd'] = setters_map['d'];
 			date = UTCDate(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
@@ -543,33 +329,28 @@
 			};
 			val.dd = (val.d < 10 ? '0' : '') + val.d;
 			val.mm = (val.m < 10 ? '0' : '') + val.m;
-			var date = [],
-				seps = $.extend([], format.separators);
+			var dateArr = [];
+			var seps = $.extend([], format.separators);
 			for (var i=0, cnt = format.parts.length; i < cnt; i++) {
 				if (seps.length)
-					date.push(seps.shift());
-				date.push(val[format.parts[i]]);
+					dateArr.push(seps.shift());
+				dateArr.push(val[format.parts[i]]);
 			}
 			return date.join('');
 		},
 		template: '<div class="datedisplay">' +
 							'<div class="datedisplay-days">' +
 								'<table class=" table-condensed">' +
-								'<thead>'+
-									'<tr>'+
-									'<th class="prev"></th>'+
-									'<th colspan="5" class="switch"></th>'+
-									'<th class="next"></th>'+
-									'</tr>'+
-								'</thead>'+
-								'<tbody></tbody>' +
-								'<tfoot><tr><th colspan="7" class="today"></th></tr></tfoot>' +
+									'<thead>'+
+										'<tr>'+
+										'<th></th>'+
+										'<th colspan="5" class="switch"></th>'+
+										'<th></th>'+
+										'</tr>'+
+									'</thead>' +
+									'<tbody></tbody>' +
 								'</table>' +
 							'</div>' +
-					'</div>'
+						'</div>'
 	};
-	
-	$.fn.datedisplay.DDGlobal = DDGlobal;
 
-	//console.log(this.jQuery);
-}( window.jQuery );

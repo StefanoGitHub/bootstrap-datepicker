@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="./css/datedisplay.css">
     <script src="./js/bootstrap-datepicker.js"></script>
     <script src="./js/bootstrap-datedisplay.js"></script>
+    <script src="./js/DateDisplay.js"></script>
 
 
 
@@ -37,14 +38,31 @@
     <tr><td class="datedisplay">2016-08-15</td></tr>
     <tr><td class="datedisplay">2014-08-16</td></tr>
     <tr><td class="datedisplay">2016-08-21</td></tr>
+    <tr><td class="datedisplay">2000-11-01</td></tr>
+    <tr><td class="datedisplay">1000-04-22</td></tr>
 </table>
 
 
 <script>
-    $('.datedisplay').datedisplay({
-        calendarWeeks: true,
-//        format: 'mm-dd-yyyy'
-        format: 'yyyy-mm-dd'
+
+    var calendarPopup = null;
+
+    function createDD(element, options) {
+        calendarPopup = new DateDisplay(element, options);
+        return calendarPopup;
+    }
+
+    $('.datedisplay').on({
+        mouseenter: function () {
+            createDD($(this), {
+                calendarWeeks: true,
+                todayHighlight: true,
+                format: 'yyyy-mm-dd'
+            }).show();
+        },
+        mouseleave: function () {
+            calendarPopup.remove();
+        }
     });
 
 
